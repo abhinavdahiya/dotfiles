@@ -95,4 +95,15 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias php-local="cd ~/Projects/php-local"
-alias go-local="cd $GOPATH"
+
+# alias for starting go dockerenv
+export GODEV_VERSION=1.0.0
+function godev() {
+	if [ "$1" = "start" ]; then
+		docker run --rm -it -v $HOME/.vimrc:/root/.vimrc -v $HOME/.vim:/root/.vim  -v "$2" godev:$GODEV_VERSION
+	fi
+
+	if [ "$1" = "ssh" ]; then
+		docker exec -it "$2" /bin/bash
+	fi
+}
