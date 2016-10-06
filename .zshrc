@@ -96,14 +96,30 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias php-local="cd ~/Projects/php-local"
 
+# location of dockerenv images
+export DOCKERENV_PATH=~/Projects/dockerenv
+
 # alias for starting go dockerenv
 export GODEV_VERSION=1.0.0
-function godev() {
-	if [ "$1" = "start" ]; then
-		docker run --rm -it -v $HOME/.vimrc:/root/.vimrc -v $HOME/.vim:/root/.vim  -v "$2" godev:$GODEV_VERSION
-	fi
+function godev-up() {
+	docker run --rm -ti -v "${PWD}:/go/src/${PWD##*/}" -w "/go/src/${PWD##*/}" godev:$GODEV_VERSION /bin/sh
+}
 
-	if [ "$1" = "ssh" ]; then
-		docker exec -it "$2" /bin/bash
-	fi
+function godev-run() {
+	docker run --rm -t -v "${PWD}:/go/src/${PWD##*/}" -w "/go/src/${PWD##*/}" godev:$GODEV_VERSION /tmp/go-exec.sh $1
+}
+
+func godev-get() {
+	sed -i "" "s/\(go get -v\)/\1 $x/g" $DOCKERENV_PATH/go/Dockerfile
+	docker build -t godev:$GODEV_VERSION $DOCKERENV_PATH/go
+}
+
+# alias for starting cpp dockerenv
+export CPPDEV_VERSION=1.0.0
+function cppdev-up() {
+	docker run --rm -ti -v "${PWD}:/app/${PWD##*/}" -w "/app/${PWD##*/}" cppdev:$CPPDEV_VERSION /bin/sh
+}
+
+function cppdev-run() {
+	docker run --rm -t -v "${PWD}:/app/${PWD##*/}" -w "/app/${PWD##*/}" --name "cppdev" cppdev:$CPPDEV_VERSION /tmp/cpp-exec.sh $1
 }
