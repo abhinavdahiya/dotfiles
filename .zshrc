@@ -102,15 +102,19 @@ export DOCKERENV_PATH=~/Projects/dockerenv
 # alias for starting go dockerenv
 export GODEV_VERSION=1.0.0
 function godev-up() {
-	docker run --rm -ti -v "${PWD}:/go/src/${PWD##*/}" -w "/go/src/${PWD##*/}" godev:$GODEV_VERSION /bin/sh
+	if [ -z "$1" ]; then
+		docker run --rm -ti -v "${PWD}:/go/src/${PWD##*/}" -w "/go/src/${PWD##*/}" godev:$GODEV_VERSION /bin/sh
+	else
+		echo "$1"
+		docker run --rm -ti -v "${PWD}:/go/src/$1" -w "/go/src/$1" godev:$GODEV_VERSION /bin/sh
+	fi
 }
 
 function godev-run() {
 	docker run --rm -t -v "${PWD}:/go/src/${PWD##*/}" -w "/go/src/${PWD##*/}" godev:$GODEV_VERSION /tmp/go-exec.sh $1
 }
 
-func godev-get() {
-	sed -i "" "s/\(go get -v\)/\1 $x/g" $DOCKERENV_PATH/go/Dockerfile
+function godev-build() {
 	docker build -t godev:$GODEV_VERSION $DOCKERENV_PATH/go
 }
 
