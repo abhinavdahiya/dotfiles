@@ -100,10 +100,11 @@ alias php-local="cd ~/Projects/php-local"
 export DOCKERENV_PATH=~/Projects/dockerenv
 
 # alias for starting go dockerenv
+alias goimports="godev-exec goimports "
 export GODEV_VERSION=1.0.0
 function godev-up() {
 	if [ -z "$1" ]; then
-		docker run --rm -ti -v "${PWD}:/go/src/${PWD##*/}" -w "/go/src/${PWD##*/}" godev:$GODEV_VERSION /bin/sh
+		docker run --rm -ti -v "${PWD}:/go/src/github.com/abhinavdahiya/${PWD##*/}" -w "/go/src/github.com/abhinavdahiya/${PWD##*/}" godev:$GODEV_VERSION /bin/sh
 	else
 		echo "$1"
 		docker run --rm -ti -v "${PWD}:/go/src/$1" -w "/go/src/$1" godev:$GODEV_VERSION /bin/sh
@@ -111,7 +112,12 @@ function godev-up() {
 }
 
 function godev-run() {
-	docker run --rm -t -v "${PWD}:/go/src/${PWD##*/}" -w "/go/src/${PWD##*/}" godev:$GODEV_VERSION /tmp/go-exec.sh $1
+	docker run --rm -t -v "${PWD}:/go/src/github.com/abhinavdahiya/${PWD##*/}" -w "/go/src/github.com/abhinavdahiya/${PWD##*/}" godev:$GODEV_VERSION /tmp/go-exec.sh $1
+}
+
+function godev-exec() {
+	echo "${@:1}"
+	docker run --rm -t -v "${PWD}:/go/src/github.com/abhinavdahiya/${PWD##*/}" -w "/go/src/github.com/abhinavdahiya/${PWD##*/}" godev:$GODEV_VERSION ${@:1}
 }
 
 function godev-build() {
